@@ -1,6 +1,6 @@
 <template>
 	<div id="app">
-		<h3>12345</h3>
+		<router-view></router-view>
 	</div>
 </template>
 
@@ -8,6 +8,6 @@
 
 </script>
 
-<style>
-
+<style lang="less" scoped>
+	#app{height: 100%;}
 </style>
