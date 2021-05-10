@@ -5,17 +5,17 @@
         <img src="../assets/logo.png" alt="">
       </div>
       <div class="login_box_2">
-        <el-form :model="form" :rules="rules">
-          <el-form-item prop="formName">
-            <el-input prefix-icon="el-icon-user-solid" v-model="form.formName" placeholder="请输入账号"></el-input>
+        <el-form :model="form" :rules="rules" ref="resetForm">
+          <el-form-item prop="username">
+            <el-input prefix-icon="el-icon-user-solid" v-model="form.username" placeholder="请输入账号" clearable></el-input>
           </el-form-item>
-          <el-form-item prop="formPassWord">
-            <el-input type="password" prefix-icon="el-icon-s-cooperation" v-model="form.formPassWord" placeholder="请输入密码"
-              ></el-input>
+          <el-form-item prop="password">
+            <el-input type="password" prefix-icon="el-icon-s-cooperation" v-model="form.password" placeholder="请输入密码"
+              clearable></el-input>
           </el-form-item>
           <el-form-item class="whd1">
-            <el-button type="primary">登录</el-button>
-            <el-button type="info">重置</el-button>
+            <el-button type="primary" @click="loginForm">登录</el-button>
+            <el-button type="info" @click="reset">重置</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -26,14 +26,15 @@
 
 <script>
   export default {
-    data () {
+    data() {
       return {
         form: {
-          formName: '',
-          formPassWord: ''
+          username: 'admin',
+          password: '123456'
         },
+        // 表单校验规则
         rules: {
-          formName: [{
+          username: [{
               required: true,
               message: '请输入账号',
               trigger: 'blur'
@@ -45,7 +46,7 @@
               trigger: 'blur'
             }
           ],
-          formPassWord: [{
+          password: [{
               required: true,
               message: '请输入密码',
               trigger: 'blur'
@@ -58,6 +59,25 @@
             }
           ]
         }
+      }
+    },
+    methods: {
+      // 重置表单
+      reset() {
+        this.$refs.resetForm.resetFields();
+      },
+      // 登录发送请求
+      loginForm() {
+        this.$refs.resetForm.validate(async validate => {
+          if (!validate) return;
+          const {
+            data: res
+          } = await this.$http.post('login', this.form);
+          if (res.meta.status !== 200) return this.$message.error('登录失败！');
+          this.$message.success('恭喜你，登录成功了！');
+          sessionStorage.setItem('Token', res.data.token);
+          this.$router.push('/home')
+        })
       }
     }
   }
