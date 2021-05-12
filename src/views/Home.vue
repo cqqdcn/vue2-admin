@@ -8,7 +8,7 @@
           <p v-show="!collapse">后台管理系统</p>
         </div>
         <el-menu :collapse-transition="false" unique-opened background-color="#304156" text-color="#fff"
-          active-text-color="#409eff" :collapse="collapse">
+          active-text-color="#409eff" :collapse="collapse" router :default-active="activepath">
           <!-- 一级栏目循环数据 -->
           <el-submenu :index="item.id + ''" v-for="(item,index) in menuList" :key="index">
             <template slot="title">
@@ -17,7 +17,8 @@
             </template>
             <el-menu-item-group>
               <!-- 二级栏目循环数据 -->
-              <el-menu-item :index="erjList.id + ''" v-for="erjList in item.children" :key="erjList.id"><i class="el-icon-menu"></i>{{erjList.authName}}</el-menu-item>
+              <el-menu-item @click="activePath('/' + erjList.path)" :index="'/' + erjList.path" v-for="erjList in item.children"
+                :key="erjList.id"><i class="el-icon-menu"></i>{{erjList.authName}}</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
         </el-menu>
@@ -27,19 +28,22 @@
         <el-header>
           <div class="headerLeft">
             <i :class="collapse?'el-icon-s-unfold':'el-icon-s-fold' " @click="hideMenu"></i>
+            <!-- 头部面包屑 -->
             <el-breadcrumb separator-class="el-icon-arrow-right">
               <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
               <el-breadcrumb-item>活动管理</el-breadcrumb-item>
               <el-breadcrumb-item>活动列表</el-breadcrumb-item>
             </el-breadcrumb>
           </div>
+          <!-- 推出登录 -->
           <div class="headerRight">
             <el-button type="info" @click="out">退出</el-button>
           </div>
         </el-header>
         <!-- 右侧主体内容 -->
         <el-main>
-
+          <!-- 内容占位符 -->
+          <router-view></router-view>
         </el-main>
       </el-container>
     </el-container>
@@ -58,11 +62,13 @@
           102: 'el-icon-s-data',
           145: 'el-icon-edit-outline'
         },
-        collapse: false
+        collapse: false,
+        activepath: ''
       }
     },
     created() {
       this.leftNav();
+      this.activepath = sessionStorage.getItem('path')
     },
     methods: {
       // 退出登录并跳转到login
@@ -81,6 +87,11 @@
       // 点击折叠菜单
       hideMenu() {
         this.collapse = !this.collapse
+      },
+      // 点击跳转二级路径
+      activePath(activepach) {
+        sessionStorage.setItem('path', activepach)
+        this.activepath = activepach
       }
     }
   }
