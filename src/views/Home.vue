@@ -17,8 +17,8 @@
             </template>
             <el-menu-item-group>
               <!-- 二级栏目循环数据 -->
-              <el-menu-item @click="activePath('/' + erjList.path)" :index="'/' + erjList.path" v-for="erjList in item.children"
-                :key="erjList.id"><i class="el-icon-menu"></i>{{erjList.authName}}</el-menu-item>
+              <el-menu-item @click="activePath('/' + erjList.path,item.authName,erjList.authName)" :index="'/' + erjList.path"
+                v-for="erjList in item.children" :key="erjList.id"><i class="el-icon-menu"></i>{{erjList.authName}}</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
         </el-menu>
@@ -30,9 +30,9 @@
             <i :class="collapse?'el-icon-s-unfold':'el-icon-s-fold' " @click="hideMenu"></i>
             <!-- 头部面包屑 -->
             <el-breadcrumb separator-class="el-icon-arrow-right">
-              <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-              <el-breadcrumb-item>活动管理</el-breadcrumb-item>
-              <el-breadcrumb-item>活动列表</el-breadcrumb-item>
+              <el-breadcrumb-item :to="{ path: '/welcome' }">首页</el-breadcrumb-item>
+              <el-breadcrumb-item v-show="breadTit1">{{breadTit1}}</el-breadcrumb-item>
+              <el-breadcrumb-item v-show="breadTit2">{{breadTit2}}</el-breadcrumb-item>
             </el-breadcrumb>
           </div>
           <!-- 推出登录 -->
@@ -63,12 +63,17 @@
           145: 'el-icon-edit-outline'
         },
         collapse: false,
-        activepath: ''
+        activepath: '',
+        breadTit1: '',
+        breadTit2: ''
       }
     },
     created() {
       this.leftNav();
       this.activepath = sessionStorage.getItem('path')
+      // 面包屑名称
+      this.breadTit1 = sessionStorage.getItem('breadName1')
+      this.breadTit2 = sessionStorage.getItem('breadName2')
     },
     methods: {
       // 退出登录并跳转到login
@@ -89,9 +94,15 @@
         this.collapse = !this.collapse
       },
       // 点击跳转二级路径
-      activePath(activepach) {
+      activePath(activepach, itemName, erjListName) {
+        // 缓存传入的路径
         sessionStorage.setItem('path', activepach)
         this.activepath = activepach
+        // 传入面包屑名称
+        sessionStorage.setItem('breadName1', itemName)
+        sessionStorage.setItem('breadName2', erjListName)
+        this.breadTit1 = itemName
+        this.breadTit2 = erjListName
       }
     }
   }
